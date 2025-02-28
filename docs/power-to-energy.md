@@ -1,4 +1,4 @@
-# power-to-energy
+# Power-to-Energy
 
 `power-to-energy` is a generic plugin for calculating enegy consumption (kWh) from wattage and duration.
 

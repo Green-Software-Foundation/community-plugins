@@ -43,7 +43,7 @@ export const ConvertPowerToEnergy = PluginFactory({
 
 /**
  * Calculates the enegy consumption from the wattage and the duration.
-*/
+ */
 const computeEnergyUsage = (input: PluginParams, config: ConfigParams) => {
   const {'input-parameter': inputParameter} = config;
   const finalwattage =
