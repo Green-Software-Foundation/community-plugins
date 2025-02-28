@@ -1,0 +1,1 @@
+export {CalculateEnergyConsumption} from './power-to-energy';

@@ -11,7 +11,7 @@ If you need to hoist plugins here, please get in touch by email to `research@gre
 
 | Method | Description |
 |------- | ----------- |
-| TBD | TBD |
+| ConvertPowerToEnergy | The method converts power to energy |
 
 # How to use
 
