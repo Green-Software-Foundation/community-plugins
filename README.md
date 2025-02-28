@@ -11,7 +11,7 @@ If you need to hoist plugins here, please get in touch by email to `research@gre
 
 | Method | Description |
 |------- | ----------- |
-| ConvertPowerToEnergy | The method converts power to energy |
+| [ConvertPowerToEnergy](https://github.com/Green-Software-Foundation/community-plugins/blob/power-to-energy/docs/power-to-energy.md) | The method converts power to energy |
 
 # How to use
 

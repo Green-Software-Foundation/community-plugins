@@ -10,7 +10,7 @@ const {MISSING_CONFIG} = STRINGS;
 describe('builtins/power-to-energy: ', () => {
   describe('ConvertPowerToEnergy: ', () => {
     const config = {
-      'input-parameter': 'wattage',
+      'input-parameter': "wattage",
       'output-parameter': 'energy-consumption',
     };
     const parametersMetadata = {
