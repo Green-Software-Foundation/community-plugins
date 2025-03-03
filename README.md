@@ -1,6 +1,5 @@
 # Community plugins
 
-
 This repository is for IF community members to host Impact Frameowrk plugins in cases where their organization's internal policies or other factors block them from creating their own external repositories. 
 The GSF does not actively maintain these plugins nor do we necessarily review PRs here.
 
@@ -12,7 +11,7 @@ If you need to hoist plugins here, please get in touch by email to `research@gre
 
 | Method | Description |
 |------- | ----------- |
-| [ConvertPowerToEnergy](https://github.com/Green-Software-Foundation/community-plugins/blob/power-to-energy/docs/power-to-energy.md) | The method converts power to energy |
+| [ConvertPowerToEnergy](docs/power-to-energy.md) | Converts power (in watts) to energy (in kWh) |
 
 # How to use
 

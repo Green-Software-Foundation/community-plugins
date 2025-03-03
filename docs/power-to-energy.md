@@ -43,7 +43,7 @@ The `mapping` block is an optional block. It is added in the plugin section and 
 ```yaml
 power-to-energy:
   method: ConvertPowerToEnergy
-  path: 'builtin'
+  path: 'working_space/community-plugins/src/lib/power-to-energy/index.ts'
   mapping:
     'parameter-name-in-the-plugin': 'parameter-name-in-the-input'
 ```
@@ -100,7 +100,7 @@ initialize:
   plugins:
     power-to-energy:
       method: ConvertPowerToEnergy
-      path: 'builtin'
+      path: 'power-to-energy'
       config:
         input-parameter: 'wattage'
         output-parameter: 'energy-consumption'

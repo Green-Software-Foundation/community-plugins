@@ -1,1 +1,1 @@
-export {CalculateEnergyConsumption} from './power-to-energy';
+export {ConvertPowerToEnergy} from './power-to-energy';
