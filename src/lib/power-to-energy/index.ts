@@ -4,9 +4,9 @@ import {ERRORS} from '@grnsft/if-core/utils';
 import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 import {PluginFactory} from '@grnsft/if-core/interfaces';
 
-import {validate} from '../../../common/util/validations';
+import {validate} from '../../common/util/validations';
 
-import {STRINGS} from '../../config';
+import {STRINGS} from '../config';
 
 const {ConfigError} = ERRORS;
 const {MISSING_CONFIG} = STRINGS;

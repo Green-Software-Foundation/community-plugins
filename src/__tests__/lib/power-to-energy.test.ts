@@ -1,8 +1,8 @@
 import {ERRORS} from '@grnsft/if-core/utils';
 
-import {ConvertPowerToEnergy} from '../../../if-run/builtins/power-to-energy';
+import {ConvertPowerToEnergy} from '../../lib/power-to-energy';
 
-import {STRINGS} from '../../../if-run/config';
+import {STRINGS} from '../../lib/config';
 
 const {InputValidationError, ConfigError} = ERRORS;
 const {MISSING_CONFIG} = STRINGS;
