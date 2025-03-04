@@ -1,6 +1,6 @@
 # Power-to-Energy
 
-`power-to-energy` is a generic plugin for calculating enegy consumption (kWh) from wattage and duration.
+`power-to-energy` is a plugin for calculating enegy consumption (kWh) from wattage and duration.
 
 You provide the wattage value and the duration.
 
@@ -10,10 +10,9 @@ For example, you could add `wattage` and `duration`. The `energy-consumption` wo
 
 ### Plugin config
 
-Three parameters are required in config: `input-parameter`, `duration` and `output-parameter`.
+Three parameters are required in config: `input-parameter` and `output-parameter`.
 
 - `input-parameter`: a string matching an existing key in the `inputs` array.
-- `duration`: the value to calculate `energy-consumption`.
 - `output-parameter`: a string defining the name to use to add the result of the calculation of the input parameters to the output array.
 
 ### Plugin parameter metadata
@@ -43,18 +42,18 @@ The `mapping` block is an optional block. It is added in the plugin section and 
 ```yaml
 power-to-energy:
   method: ConvertPowerToEnergy
-  path: 'working_space/community-plugins/src/lib/power-to-energy/index.ts'
+  path: 'https://github.com/Green-Software-Foundation/community-plugins'
   mapping:
     'parameter-name-in-the-plugin': 'parameter-name-in-the-input'
 ```
 
 ### Inputs
 
-All of `input-parameters` must be available in the input array.
+`input-parameter` must be available in the input array.
 
 ## Returns
 
-- `output-parameter`: the calculated value of the `input-parameters` with the parameter name defined by `output-parameter` in config.
+- `output-parameter`: the calculated value of the `input-parameter` with the parameter name defined by `output-parameter` in config.
 
 ## Calculation
 
@@ -100,7 +99,7 @@ initialize:
   plugins:
     power-to-energy:
       method: ConvertPowerToEnergy
-      path: 'power-to-energy'
+      path: 'https://github.com/Green-Software-Foundation/community-plugins'
       config:
         input-parameter: 'wattage'
         output-parameter: 'energy-consumption'
@@ -116,7 +115,7 @@ tree:
           duration: 3600
           watt: 3
 ```
-
+You can also use `community-plugins` as a path insted of `https://github.com/Green-Software-Foundation/community-plugins`. 
 You can run this example by saving it as `./examples/manifests/power-to-energy.yml` and executing the following command from the project root:
 
 ```sh
@@ -127,7 +126,7 @@ The results will be saved to a new `yaml` file in `./examples/outputs`
 
 ## Errors
 
-`power-to-energy` exposes one of the IF error classes.
+`power-to-energy` exposes two of the IF error classes.
 
 ### ConfigError
 
@@ -136,7 +135,6 @@ You will receive an error starting `ConfigError: ` if you have not provided the 
 The required parameters are:
 
 - `input-parameter`: this must be a string
-- `duration`: this must be a number
 - `output-parameter`: this must be a string
 
 You can fix this error by checking you are providing valid values for each parameter in the config.
@@ -144,7 +142,7 @@ You can fix this error by checking you are providing valid values for each param
 ### `MissingInputDataError`
 
 This error arises when a necessary piece of input data is missing from the `inputs` array.
-Every element in the ``inputs` array must contain:
+Every element in the `inputs` array must contain:
 
 - `timestamp`
 - `duration`
