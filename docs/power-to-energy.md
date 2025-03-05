@@ -17,7 +17,7 @@ Two parameters are required in config: `input-parameter` and `output-parameter`.
 
 ### Inputs
 
-`input-parameter` must be available in the inputs array
+`input-parameter` must be available in the `inputs` array
 
 ## Returns
 
@@ -26,33 +26,7 @@ Two parameters are required in config: `input-parameter` and `output-parameter`.
 ## Calculation
 
 ```pseudocode
-output = input-parameter * duration / 3600 / 1000
-```
-
-## Implementation
-
-To run the plugin from a Typescript app, you must first create an instance of `ConvertPowerToEnergy`. Then, you can call `execute()`.
-
-```typescript
-const config = {
-  'input-parameter': 'wattage',
-  'output-parameter': 'energy-consumption',
-};
-const parametersMetadata = {inputs: {}, outputs: {}};
-const mapping = {};
-
-const convertPowerToEnergy = ConvertPowerToEnergy(
-  config,
-  parametersMetadata,
-  mapping
-);
-const result = await convertPowerToEnergy.execute([
-  {
-    duration: 3600,
-    timestamp: '2021-01-01T00:00:00Z',
-    wattage: 3,
-  },
-]);
+output-parameter = input-parameter * duration / 3600 / 1000
 ```
 
 ## Example manifest
@@ -81,7 +55,7 @@ tree:
       inputs:
         - timestamp: 2023-08-06T00:00
           duration: 3600
-          watt: 3
+          wattage: 3
 ```
 You can also use `community-plugins` as a path insted of `https://github.com/Green-Software-Foundation/community-plugins`. 
 You can run this example by saving it as `./examples/manifests/power-to-energy.yml` and executing the following command from the project root:
