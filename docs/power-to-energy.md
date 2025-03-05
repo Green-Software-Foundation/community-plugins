@@ -10,46 +10,14 @@ For example, you could add `wattage` and `duration`. The `energy-consumption` wo
 
 ### Plugin config
 
-Three parameters are required in config: `input-parameter` and `output-parameter`.
+Two parameters are required in config: `input-parameter` and `output-parameter`.
 
 - `input-parameter`: a string matching an existing key in the `inputs` array.
 - `output-parameter`: a string defining the name to use to add the result of the calculation of the input parameters to the output array.
 
-### Plugin parameter metadata
-
-The `parameter-metadata` section contains information about `description`, `unit` and `aggregation-method`
-of the parameters of the inputs and outputs
-
-- `inputs`: describe parameters of the `input-parameter` of the config. Each parameter has:
-
-  - `description`: description of the parameter
-  - `unit`: unit of the parameter
-  - `aggregation-method`: aggregation method object of the parameter
-    - `time`: this value is used for `horizontal` aggregation. It can be of the following values: `sum`, `avg`, `copy`, or `none`.
-    - `component`: this value is used for `vertical` aggregation. It can be of the following values: `sum`, `avg`, `copy`, or `none`.
-
-- `outputs`: describe parameters of the `output-parameter` of the config. Each parameter has:
-  - `description`: description of the parameter
-  - `unit`: unit of the parameter
-  - `aggregation-method`: aggregation method object of the parameter
-    - `time`: this value is used for `horizontal` aggregation. It can be of the following values: `sum`, `avg`, `copy`, or `none`.
-    - `component`: this value is used for `vertical` aggregation. It can be of the following values: `sum`, `avg`, `copy`, or `none`.
-
-### Mapping
-
-The `mapping` block is an optional block. It is added in the plugin section and allows the plugin to receive a parameter from the input with a different name than the one the plugin uses for data manipulation. The parameter with the mapped name will not appear in the outputs. It also maps the output parameter of the plugin. The structure of the `mapping` block is:
-
-```yaml
-power-to-energy:
-  method: ConvertPowerToEnergy
-  path: 'https://github.com/Green-Software-Foundation/community-plugins'
-  mapping:
-    'parameter-name-in-the-plugin': 'parameter-name-in-the-input'
-```
-
 ### Inputs
 
-`input-parameter` must be available in the input array.
+`input-parameter` must be available in the inputs array
 
 ## Returns
 
