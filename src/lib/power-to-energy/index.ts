@@ -4,17 +4,14 @@ import {ERRORS} from '@grnsft/if-core/utils';
 import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 import {PluginFactory} from '@grnsft/if-core/interfaces';
 
-import {validate} from '../../common/util/validations';
-
-import {STRINGS} from '../config';
+import {validate} from '@grnsft/if-core/utils/validations';
 
 const {ConfigError} = ERRORS;
-const {MISSING_CONFIG} = STRINGS;
 
 export const ConvertPowerToEnergy = PluginFactory({
   configValidation: (config: ConfigParams) => {
     if (!config || !Object.keys(config)?.length) {
-      throw new ConfigError(MISSING_CONFIG);
+      throw new ConfigError('Config is not provided.');
     }
     const schema = z.object({
       'input-parameter': z.string().min(1),

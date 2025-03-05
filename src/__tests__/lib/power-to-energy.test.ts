@@ -2,10 +2,7 @@ import {ERRORS} from '@grnsft/if-core/utils';
 
 import {ConvertPowerToEnergy} from '../../lib/power-to-energy';
 
-import {STRINGS} from '../../lib/config';
-
 const {InputValidationError, ConfigError} = ERRORS;
-const {MISSING_CONFIG} = STRINGS;
 
 describe('builtins/power-to-energy: ', () => {
   describe('ConvertPowerToEnergy: ', () => {
@@ -234,7 +231,7 @@ describe('builtins/power-to-energy: ', () => {
           },
         ]);
       } catch (error) {
-        expect(error).toStrictEqual(new ConfigError(MISSING_CONFIG));
+        expect(error).toStrictEqual(new ConfigError('Config is not provided.'));
       }
     });
   });
