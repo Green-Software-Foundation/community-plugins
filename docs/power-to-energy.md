@@ -21,7 +21,7 @@ Two parameters are required in config: `input-parameter` and `output-parameter`.
 
 ## Returns
 
-- `output-parameter`: the calculated value of the `input-parameter` with the parameter name defined by `output-parameter` in config.
+energy consumption derived by input parameters (`wattage` and `duration`)
 
 ## Calculation
 
