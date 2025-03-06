@@ -58,7 +58,7 @@ tree:
           wattage: 3
 ```
 You can set `community-plugins` to `path` insted of `https://github.com/Green-Software-Foundation/community-plugins`. 
-You can run this example by saving it as `./examples/manifests/power-to-energy.yml` and executing the following command from the project root:
+You can run this example as following when you save it to `./examples/manifests/power-to-energy.yml`:
 
 ```sh
 if-run --manifest ./examples/manifests/power-to-energy.yml --output ./examples/outputs/power-to-energy
