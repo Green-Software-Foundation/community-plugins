@@ -90,4 +90,4 @@ Every element in the `inputs` array must contain:
 - `duration`
 - whatever value you passed to `input-parameter`
 
-For more information on our error classes, please visit [our docs](https://if.greensoftware.foundation/reference/errors)
+For more information on these error classes, please visit [IF docs](https://if.greensoftware.foundation/reference/errors)
