@@ -2,9 +2,6 @@
 
 `power-to-energy` is a plugin for calculating enegy consumption (kWh) from wattage and duration.
 
-You provide the wattage value and the duration.
-
-For example, you could add `wattage` and `duration`. The `energy-consumption` would then be added to every observation in your input array as the calculated value of `wattage` and `duration`.
 
 ## Parameters
 
