@@ -12,7 +12,7 @@ For example, you could add `wattage` and `duration`. The `energy-consumption` wo
 
 Two parameters are required in config: `input-parameter` and `output-parameter`.
 
-- `input-parameter`: a string matching an existing key in the `inputs` array.
+- `input-parameter`: a string matching an existing key which represents `wattage` in the `inputs` array.
 - `output-parameter`: a string defining the name to use to add the result of the calculation of the input parameters to the output array.
 
 ### Inputs
