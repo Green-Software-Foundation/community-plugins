@@ -26,7 +26,7 @@ energy consumption derived by input parameters (`wattage` and `duration`)
 ## Calculation
 
 ```pseudocode
-output-parameter = input-parameter * duration / 3600 / 1000
+output-parameter = wattage * duration / 3600 / 1000
 ```
 
 ## Example manifest
