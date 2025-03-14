@@ -1,0 +1,98 @@
+# REST client
+
+`if-rest-client` is a plugin for executing HTTP methods GET, PUT, and POST
+
+
+## Parameters
+
+### Plugin config
+
+Three parameters are required in config: `query`, `jpath` and `output`.
+
+- `query`: a string array matching an existing key and include below
+  - `method`: HTTP method
+  - `url`: The URL to which you send the request
+  - `header`: HTTP request header
+    - `Authorization`: optional and provide authentication information to the server
+    - `Content-Type` : optional and specify the media type of the request body
+  - `data` : request body (used with POST and PUT methods)
+  - `auth` : optional and authentication information for HTTP Basic Authentication
+- `jpath`: JSONPath and you only need to configure it when using the GET method
+- `output`: parameter name to store the result of GET method in the output array and you only need to configure it when using the GET method
+
+### Inputs
+
+`input-parameter` must be available in the `inputs` array
+
+## Returns
+
+energy consumption derived by input parameters (`wattage` and `duration`)
+
+## Calculation
+
+```pseudocode
+output-parameter = wattage * duration / 3600 / 1000
+```
+
+## Example manifest
+
+IF users will typically call the plugin as part of a pipeline defined in a manifest file. In this case, instantiating the plugin is handled by `if-run` and does not have to be done explicitly by the user. The following is an example manifest that calls `power-to-energy`:
+
+```yaml
+name: power-to-energy-demo
+description:
+tags:
+initialize:
+  plugins:
+    power-to-energy:
+      method: ConvertPowerToEnergy
+      path: 'https://github.com/Green-Software-Foundation/community-plugins'
+      config:
+        input-parameter: 'wattage'
+        output-parameter: 'energy-consumption'
+
+tree:
+  children:
+    child:
+      pipeline:
+        compute:
+          - power-to-energy
+      inputs:
+        - timestamp: 2023-08-06T00:00
+          duration: 3600
+          wattage: 3
+```
+You can set `community-plugins` to `path` insted of `https://github.com/Green-Software-Foundation/community-plugins`. 
+You can run this example as following when you save it to `./examples/manifests/power-to-energy.yml`:
+
+```sh
+if-run --manifest ./examples/manifests/power-to-energy.yml --output ./examples/outputs/power-to-energy
+```
+
+The results will be saved to a new `yaml` file in `./examples/outputs`
+
+## Errors
+
+`power-to-energy` exposes two of the IF error classes.
+
+### ConfigError
+
+You will receive an error starting `ConfigError: ` if you have not provided the expected configuration data in the plugin's `initialize` block.
+
+The required parameters are:
+
+- `input-parameter`: this must be a string
+- `output-parameter`: this must be a string
+
+You can fix this error by checking you are providing valid values for each parameter in the config.
+
+### `MissingInputDataError`
+
+This error arises when a necessary piece of input data is missing from the `inputs` array.
+Every element in the `inputs` array must contain:
+
+- `timestamp`
+- `duration`
+- whatever value you passed to `input-parameter`
+
+For more information on these error classes, please visit [IF docs](https://if.greensoftware.foundation/reference/errors)
