@@ -1,6 +1,7 @@
 import {z} from 'zod';
-import axios, {AxiosResponse} from 'axios';
+import axios from 'axios';
 import * as jsonpath from 'jsonpath';
+import {Agent} from 'https';
 
 import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 import {PluginFactory} from '@grnsft/if-core/interfaces';
@@ -29,43 +30,19 @@ export const RESTClient = PluginFactory({
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const {query, jpath, output} = config;
+    const {query} = config;
+    const method = query.method;
 
     try {
-      let response: AxiosResponse;
-      const method = query.method;
-      if (method.toUpperCase() === 'GET') {
-        response = await axios(query);
-        const data = response.data;
-
-        if (typeof jpath === 'undefined') {
-          return inputs.map(input => ({
-            ...input,
-            [output]: data,
-          }));
-        } else {
-          const result = jsonpath.query(data, jpath);
-
-          if (result.length === 1) {
-            return inputs.map(input => ({
-              ...input,
-              [output]: result[0],
-            }));
-          }
-
-          return inputs.map(input => ({
-            ...input,
-            [output]: result,
-          }));
-        }
-      } else if (method.toUpperCase() === 'POST') {
-        response = await axios(query);
-        return inputs;
-      } else if (method.toUpperCase() === 'PUT') {
-        response = await axios(query);
-        return inputs;
+      if (
+        method.toUpperCase() === 'POST' ||
+        method.toUpperCase() === 'PUT' ||
+        method.toUpperCase() === 'GET'
+      ) {
+        const result = await handleRequest(inputs, config);
+        return result;
       } else {
-        throw new Error('Unsupported method: ${method}');
+        throw new Error(`Unsupported method: ${query.method}`);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -84,3 +61,41 @@ export const RESTClient = PluginFactory({
     }
   },
 });
+
+const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
+  const {query, jpath, output} = config;
+  const method = query.method;
+  const agent = new Agent({
+    rejectUnauthorized: false,
+  });
+  const response = await axios({
+    ...query,
+    httpsAgent: agent,
+  });
+  const data = response.data;
+
+  if (method.toUpperCase() === 'GET') {
+    if (typeof jpath === 'undefined') {
+      return inputs.map((input: any) => ({
+        ...input,
+        [output]: data,
+      }));
+    } else {
+      const result = jsonpath.query(data, jpath);
+
+      if (result.length === 1) {
+        return inputs.map((input: any) => ({
+          ...input,
+          [output]: result[0],
+        }));
+      }
+
+      return inputs.map((input: any) => ({
+        ...input,
+        [output]: result,
+      }));
+    }
+  } else if (method === 'POST' || method === 'PUT') {
+    return inputs;
+  }
+};

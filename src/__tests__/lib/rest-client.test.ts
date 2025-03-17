@@ -151,6 +151,34 @@ describe('builtins/rest-client', () => {
         expect(result).toStrictEqual(expectedResult);
       });
 
+      it('rejects with method error.', async () => {
+        expect.assertions(2);
+        const config = {
+          query: {
+            method: 'DELETE',
+            url: 'https://api.example.com/data',
+          },
+          jpath: '$.data',
+          output: 'result',
+        };
+        mock.onGet(config.query.url).reply(404);
+        const restClient = RESTClient(config, parametersMetadata, {});
+        const input = [
+          {
+            timestamp: '2024-03-01',
+            duration: 3600,
+          },
+        ];
+        try {
+          await restClient.execute(input);
+        } catch (error) {
+          if (error instanceof Error) {
+            expect(error).toBeInstanceOf(Error);
+            expect(error.message).toEqual('Unsupported method: DELETE');
+          }
+        }
+      });
+
       it('rejects with axios error.', async () => {
         expect.assertions(1);
         const config = {
