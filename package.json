@@ -11,6 +11,9 @@
   },
   "dependencies": {
     "@grnsft/if-core": "^0.0.25",
+    "axios": "^1.8.3",
+    "axios-mock-adapter": "^2.1.0",
+    "jsonpath": "^1.1.1",
     "typescript": "^5.1.6",
     "zod": "^3.24.2"
   },
@@ -19,6 +22,7 @@
     "@babel/preset-typescript": "^7.22.5",
     "@jest/globals": "^29.6.1",
     "@types/jest": "^29.5.7",
+    "@types/jsonpath": "^0.2.4",
     "@types/node": "^20.4.5",
     "fixpack": "^4.0.0",
     "gts": "^5.0.0",

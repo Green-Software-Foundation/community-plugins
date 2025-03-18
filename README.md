@@ -12,6 +12,7 @@ If you need to hoist plugins here, please get in touch by email to `research@gre
 | Method | Description |
 |------- | ----------- |
 | [ConvertPowerToEnergy](docs/power-to-energy.md) | Converts power (in watts) to energy (in kWh) |
+| [RESTClient](docs/rest-client.md) | Executes HTTP methods GET, PUT, and POST |
 
 # How to use
 
