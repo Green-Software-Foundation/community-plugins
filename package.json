@@ -13,6 +13,7 @@
     "@grnsft/if-core": "^0.0.25",
     "axios": "^1.8.3",
     "axios-mock-adapter": "^2.1.0",
+    "flatted": "^3.3.3",
     "jsonpath": "^1.1.1",
     "typescript": "^5.1.6",
     "zod": "^3.24.2"

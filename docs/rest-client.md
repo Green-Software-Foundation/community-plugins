@@ -1,39 +1,32 @@
 # REST client
 
-`rest-client` is a plugin for executing HTTP methods GET, PUT, and POST
+`rest-client` is a plugin for executing HTTP methods `GET`, `PUT`, and `POST`. 
 
-You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method. This plugin supports several authentication.
+You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method. SSL/TLS is turned off in this plugin.
+
+When `GET` is used, only a numeric value is accepted as `output`, otherwise an error is returned. When `PUT` and `POST` are used, the `output` is the HTTP response.
 
 
 ## Parameters
 
 ### Plugin config
 
-Three parameters are required in config: `query`, `jpath` and `output`.
+The parameters are required in config: `method`, `url`, `data`, `bearer-tokken`, `http-basic-authentication`, `jpath` and `output`.
 
-- `query`: a string array matching an existing key and includes the following:
-  - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
-  - `url`: The URL to which you send the request
-  - `headers`: optional and HTTP request header
-    - `Authorization`: optional and provide authentication information to the target. For example,
-      - Bearer Token Authentication: 
-        ```yml
-        Authorization: Bearer <token>
-        ```
-      - API Key Authentication: 
-        ```yml
-        Authorization: ApiKey <api_key>
-        ```
-  - `data` : request body, used with `PUT` and `POST` methods
-  - `auth` : optional and authentication information for HTTP Basic Authentication
+
+- `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
+- `url`: The URL to which you send the request 
+- `data` : data to be sent to the server, used with `PUT` and `POST` methods
+- `bearer-tokken`: optional and Bearer Token providing authentication information to the target.
+- `http-basic-authentication` : optional and authentication information for HTTP Basic Authentication
     ```yml
-    auth: {
-      username: 'yourUsername',
+    http-basic-authentication: 
+      username: 'yourUsername'
       password: 'yourPassword'
-    }
+    
     ```
 - `jpath`: optional, JSONPath expression, and you can use it when using the GET method
-- `output`: parameter name to store the result of GET method in the output array and you only need to configure it when using the GET method
+- `output`: parameter name to store the result of `GET` method or HTTP response of `PUT` or `POST` methods
 
 ### Inputs
 
@@ -41,7 +34,7 @@ There are no strict requirements on input for this plugin because they depend up
 
 ## Returns
 
-input data with value requested by `GET` method or input data for `PUT` and `POST`
+`output`: a numerical value requested by `GET` (and scraped by `jpath`) or HTTP response for `PUT` and `POST`
 
 ## Example manifest
 
@@ -57,11 +50,9 @@ initialize:
       path: 'https://github.com/Green-Software-Foundation/community-plugins'
       method: RESTClient
       config:
-        query:
-          url: https://api.example.com/data
-          method: get
-          headers: 
-            Authorization: Bearer your-secret-token
+        url: https://api.example.com/data
+        method: get
+        bearer-tokken: Bearer your-secret-token
         jpath: $.information[?(@.id==1)].wattage
         output: wattage
 tree:
@@ -75,29 +66,30 @@ tree:
           duration: 100
 ```
 ```yaml
-name: put-wattge
+name: wattage-in-put-request
 description: successful path
 tags:
 initialize:
   plugins:
-    put-wattage:
+    wattage-in-put-request:
       path: 'https://github.com/Green-Software-Foundation/community-plugins'
       method: RESTClient
       config:
-        query:
-          method: put
-          url: https://api.example.com/data
-          data: {wattage: 100}
-          auth: {
-            username: 'yourUsername',
-            password: 'yourPassword'
-          }
+        method: put
+        url: https://api.example.com/data
+        data: 
+          wattage: 100
+        http-basic-authentication: 
+          username: 'yourUsername'
+          password: 'yourPassword'
+        output: status
+          
 tree:
   children:
     child:
       pipeline:
         compute:
-          - put-wattage
+          - wattage-in-put-request
       inputs:
         - timestamp: 2023-07-06T00:00 
           duration: 100
@@ -105,25 +97,26 @@ tree:
 
 ```
 ```yaml
-name: post-wattge
+name: wattage-in-post-request
 description: successful path
 tags:
 initialize:
   plugins:
-    post-wattage:
+    wattage-in-post-request:
       path: 'https://github.com/Green-Software-Foundation/community-plugins'
       method: RESTClient
       config:
-        query:
-          url: https://api.example.com/data
-          method: post
-          data: {wattage: 100}
+        url: https://api.example.com/data
+        method: post
+        data: 
+          wattage: 100
+        output: status
 tree:
   children:
     child:
       pipeline:
         compute:
-          - post-wattage
+          - wattage-in-post-request
       inputs:
         - timestamp: 2023-07-06T00:00 
           duration: 100
@@ -147,7 +140,11 @@ You will receive an error starting `ConfigError: ` if you have not provided the 
 
 The required parameters are:
 
-- `query`: this must be an array of key-value pairs 
+- `method`: this must be a string
+- `url`: this must be a string
+- `data` : this is must be array
+- `bearer-tokken`: this must be a string
+- `http-basic-authentication` : this must be a string
 - `jpath`: this must be a string
 - `output`: this must be a string
 
