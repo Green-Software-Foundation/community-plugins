@@ -43,9 +43,7 @@ export const RESTClient = PluginFactory({
         if (
           errorMessage.startsWith('Unsupported method') ||
           errorMessage.startsWith('Only numerical output is supported.') ||
-          errorMessage.startsWith(
-            'status code 204: The response data has no content.'
-          )
+          errorMessage.startsWith('The response data has no content.')
         ) {
           throw new Error(errorMessage);
         } else {
@@ -102,6 +100,9 @@ const checkIfNumber = (input: any): number => {
       `Only numerical output is supported. '${data}' is not a number.`
     );
   }
+  if (data.length === 0) {
+    throw new Error('The response data has no content.');
+  }
   return data;
 };
 
@@ -117,9 +118,6 @@ const processData = (
   config: ConfigParams,
   inputs: PluginParams
 ) => {
-  if (response.status === 204) {
-    throw new Error('status code 204: The response data has no content.');
-  }
   const data = response.data;
   const {jpath, output} = config;
   const result = checkIfNumber(jsonpath.query(data, jpath));

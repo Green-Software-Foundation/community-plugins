@@ -263,9 +263,7 @@ describe('rest-client', () => {
           await restClient.execute(input);
         } catch (error) {
           if (error instanceof Error) {
-            expect(error.message).toEqual(
-              'status code 204: The response data has no content.'
-            );
+            expect(error.message).toEqual('The response data has no content.');
           }
         }
       });
