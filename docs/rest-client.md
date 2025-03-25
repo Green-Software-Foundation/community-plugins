@@ -11,7 +11,7 @@ When `GET` is used, only a numeric value is accepted as `output`, otherwise an e
 
 ### Plugin config
 
-The parameters are required in config: `method`, `url`, `data`, `bearer-tokken`, `http-basic-authentication`, `jpath` and `output`.
+The parameters are required in config: `method`, `url`, `data`, `bearer-token`, `http-basic-authentication`, `jpath` and `output`.
 
 
 - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
