@@ -2,7 +2,6 @@ import {z} from 'zod';
 import axios from 'axios';
 import * as jsonpath from 'jsonpath';
 import {Agent} from 'https';
-import {stringify} from 'flatted';
 
 import {ConfigParams, PluginParams} from '@grnsft/if-core/types';
 import {PluginFactory} from '@grnsft/if-core/interfaces';
@@ -21,8 +20,9 @@ export const RESTClient = PluginFactory({
       url: z.string(),
       data: z.any().optional(),
       'http-basic-authentication': z.record(z.string(), z.string()).optional(),
-      'bearer-tokken': z.string().optional(),
-      jpath: z.string().optional(),
+      headers: z.record(z.string(), z.any()).optional(),
+      'ssl-tls-active': z.boolean().optional(),
+      jpath: z.string(),
       output: z.string(),
     });
 
@@ -32,27 +32,25 @@ export const RESTClient = PluginFactory({
     const {method, url} = config;
 
     try {
-      if (
-        method.toUpperCase() === 'POST' ||
-        method.toUpperCase() === 'PUT' ||
-        method.toUpperCase() === 'GET'
-      ) {
-        const result = await handleRequest(inputs, config);
-        return result;
+      if (['POST', 'PUT', 'GET'].includes(method.toUpperCase())) {
+        return await handleRequest(inputs, config);
       } else {
         throw new Error(`Unsupported method: ${method.toUpperCase()}`);
       }
     } catch (error) {
       if (error instanceof Error) {
-        if (error.message.startsWith('Unsupported method')) {
-          throw new Error(error.message);
-        } else if (
-          error.message.startsWith('Only numerical output is supported.')
+        const errorMessage = error.message;
+        if (
+          errorMessage.startsWith('Unsupported method') ||
+          errorMessage.startsWith('Only numerical output is supported.') ||
+          errorMessage.startsWith(
+            'status code 204: The response data has no content.'
+          )
         ) {
-          throw new Error(error.message);
+          throw new Error(errorMessage);
         } else {
           throw new FetchingFileError(
-            `Failed fetching the file: ${url}. ${error.message}`
+            `Failed fetching the file: ${url}. ${errorMessage}`
           );
         }
       } else {
@@ -70,53 +68,31 @@ const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
     url,
     data,
     'http-basic-authentication': auth,
-    'bearer-tokken': authorization,
-    output,
+    headers,
+    'ssl-tls-active': rejectUnauthorized,
   } = config;
-  const agent = new Agent({
-    rejectUnauthorized: false,
-  });
+
+  let agent;
+  if (rejectUnauthorized === undefined) {
+    agent = new Agent({
+      rejectUnauthorized: true,
+    });
+  } else {
+    agent = new Agent({
+      rejectUnauthorized: rejectUnauthorized,
+    });
+  }
+
   const response = await axios({
     method: method.toUpperCase(),
     url: url,
-    data: data || null,
-    auth: auth || null,
-    headers: {Authorization: authorization || null},
+    data: data,
+    auth: auth,
+    headers: headers,
     httpsAgent: agent,
   });
-  if (method.toUpperCase() === 'GET') {
-    const data = response.data;
-    const {jpath} = config;
-    if (typeof jpath === 'undefined') {
-      const result = checkIfNumber(data);
-      return inputs.map((input: any) => ({
-        ...input,
-        [output]: result,
-      }));
-    } else {
-      const result = checkIfNumber(jsonpath.query(data, jpath));
-      return inputs.map((input: any) => ({
-        ...input,
-        [output]: result,
-      }));
-    }
-  } else if (
-    method.toUpperCase() === 'POST' ||
-    method.toUpperCase() === 'PUT'
-  ) {
-    const result = {
-      status: response.status,
-      statusText: response.statusText,
-      data: JSON.stringify(response.data),
-      headers: JSON.stringify(response.headers),
-      config: JSON.stringify(response.config),
-      request: JSON.stringify(stringify(response.request)),
-    };
-    return inputs.map((input: any) => ({
-      ...input,
-      [output]: result,
-    }));
-  }
+
+  return processData(response, config, inputs);
 };
 
 const checkIfNumber = (input: any): number => {
@@ -134,4 +110,22 @@ const extractSingleElement = (input: any): any => {
     return input[0];
   }
   return input;
+};
+
+const processData = (
+  response: any,
+  config: ConfigParams,
+  inputs: PluginParams
+) => {
+  if (response.status === 204) {
+    throw new Error('status code 204: The response data has no content.');
+  }
+  const data = response.data;
+  const {jpath, output} = config;
+  const result = checkIfNumber(jsonpath.query(data, jpath));
+
+  return inputs.map((input: any) => ({
+    ...input,
+    [output]: result,
+  }));
 };

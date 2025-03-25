@@ -2,22 +2,26 @@
 
 `rest-client` is a plugin for executing HTTP methods `GET`, `PUT`, and `POST`. 
 
-You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method. SSL/TLS is turned off in this plugin.
-
-When `GET` is used, only a numeric value is accepted as `output`, otherwise an error is returned. When `PUT` and `POST` are used, the `output` is the HTTP response.
-
+You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method.Only a numeric value is accepted as `output`, otherwise an error is returned.
 
 ## Parameters
 
 ### Plugin config
 
-The parameters are required in config: `method`, `url`, `data`, `bearer-tokken`, `http-basic-authentication`, `jpath` and `output`.
+The parameters are required in config: `method`, `url`, `data`, `headers`, `http-basic-authentication`, `jpath` and `output`.
 
 
 - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
-- `url`: The URL to which you send the request 
-- `data` : data to be sent to the server, used with `PUT` and `POST` methods
-- `bearer-tokken`: optional and Bearer Token providing authentication information to the target.
+- `url`: the URL to which you send the request 
+- `data` : used with `PUT` and `POST` methods and the data specified in `data` is set in the request body in JSON format but if `Content-Type` is specified in `headers`, it can be overridden by that value.
+- `headers`: optional and request header
+    ```yml
+    headers: 
+      - Accept: application/json
+      - Authorization: Bearer xxxxxx
+      - X-Custom-Header: foo
+    
+    ```
 - `http-basic-authentication` : optional and authentication information for HTTP Basic Authentication
     ```yml
     http-basic-authentication: 
@@ -25,8 +29,9 @@ The parameters are required in config: `method`, `url`, `data`, `bearer-tokken`,
       password: 'yourPassword'
     
     ```
-- `jpath`: optional, JSONPath expression, and you can use it when using the GET method
-- `output`: parameter name to store the result of `GET` method or HTTP response of `PUT` or `POST` methods
+- `ssl-tls-active`: optional, SSL/TLS is enabled if true and undefined, SSL/TLS is disabled if false
+- `jpath`: JSONPath expression and you can use it when using the GET method
+- `output`: parameter name to store the result of this plugin
 
 ### Inputs
 
@@ -34,7 +39,7 @@ There are no strict requirements on input for this plugin because they depend up
 
 ## Returns
 
-`output`: a numerical value requested by `GET` (and scraped by `jpath`) or HTTP response for `PUT` and `POST`
+`output`: a numerical value requested by `GET`, `PUT`, and `POST` and scraped by `jpath`
 
 ## Example manifest
 
@@ -52,7 +57,9 @@ initialize:
       config:
         url: https://api.example.com/data
         method: get
-        bearer-tokken: Bearer your-secret-token
+        headers:
+          Authorization: Bearer your-secret-token
+        ssl-tls-active: true
         jpath: $.information[?(@.id==1)].wattage
         output: wattage
 tree:
@@ -82,7 +89,8 @@ initialize:
         http-basic-authentication: 
           username: 'yourUsername'
           password: 'yourPassword'
-        output: status
+        output: result
+        jpath: data
           
 tree:
   children:
@@ -110,7 +118,8 @@ initialize:
         method: post
         data: 
           wattage: 100
-        output: status
+        output: result
+        jpath: data
 tree:
   children:
     child:

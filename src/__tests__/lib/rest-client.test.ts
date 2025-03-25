@@ -24,6 +24,8 @@ describe('rest-client', () => {
           url: '',
           method: 'get',
           output: 'wattage',
+          'ssl-tls-active': false,
+          jpath: 'data',
         };
 
         const restClient = RESTClient(config, parametersMetadata, {});
@@ -37,7 +39,7 @@ describe('rest-client', () => {
       it('successfully applies RESTCLient `GET` method to given input.', async () => {
         expect.assertions(1);
         const config = {
-          method: 'GET',
+          method: 'GeT',
           url: 'https://api.example.com/data',
           jpath: '$.data',
           output: 'result',
@@ -69,7 +71,9 @@ describe('rest-client', () => {
           method: 'PUT',
           url: 'https://api.example.com/data',
           data: {data: 100},
-          output: 'status',
+          jpath: 'data',
+          output: 'result',
+          'ssl-tls-active': true,
         };
 
         const restClient = RESTClient(config, parametersMetadata, {});
@@ -85,16 +89,7 @@ describe('rest-client', () => {
           {
             timestamp: '2024-03-01',
             duration: 3600,
-            status: {
-              config:
-                '{"transitional":{"silentJSONParsing":true,"forcedJSONParsing":true,"clarifyTimeoutError":false},"transformRequest":[null],"transformResponse":[null],"timeout":0,"xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN","maxContentLength":-1,"maxBodyLength":-1,"env":{},"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json"},"method":"put","url":"https://api.example.com/data","data":"{\\"data\\":100}","auth":null,"httpsAgent":{"_events":{},"_eventsCount":2,"defaultPort":443,"protocol":"https:","options":{"rejectUnauthorized":false,"noDelay":true,"path":null},"requests":{},"sockets":{},"freeSockets":{},"keepAliveMsecs":1000,"keepAlive":false,"maxSockets":null,"maxFreeSockets":256,"scheduling":"lifo","maxTotalSockets":null,"totalSocketCount":0,"maxCachedSessions":100,"_sessionCache":{"map":{},"list":[]}},"allowAbsoluteUrls":true}',
-              data: '{"data":100}',
-              headers: '{}',
-              request:
-                '"[{\\"responseURL\\":\\"1\\"},\\"https://api.example.com/data\\"]"',
-              status: 200,
-              statusText: undefined,
-            },
+            result: 100,
           },
         ];
 
@@ -111,7 +106,8 @@ describe('rest-client', () => {
             username: 'yourUsername',
             password: 'yourPassword',
           },
-          output: 'status',
+          jpath: 'data',
+          output: 'result',
         };
 
         const restClient = RESTClient(config, parametersMetadata, {});
@@ -127,16 +123,7 @@ describe('rest-client', () => {
           {
             timestamp: '2024-03-01',
             duration: 3600,
-            status: {
-              config:
-                '{"transitional":{"silentJSONParsing":true,"forcedJSONParsing":true,"clarifyTimeoutError":false},"transformRequest":[null],"transformResponse":[null],"timeout":0,"xsrfCookieName":"XSRF-TOKEN","xsrfHeaderName":"X-XSRF-TOKEN","maxContentLength":-1,"maxBodyLength":-1,"env":{},"headers":{"Accept":"application/json, text/plain, */*","Content-Type":"application/json"},"method":"post","url":"https://api.example.com/data","data":"{\\"data\\":100}","auth":{"username":"yourUsername","password":"yourPassword"},"httpsAgent":{"_events":{},"_eventsCount":2,"defaultPort":443,"protocol":"https:","options":{"rejectUnauthorized":false,"noDelay":true,"path":null},"requests":{},"sockets":{},"freeSockets":{},"keepAliveMsecs":1000,"keepAlive":false,"maxSockets":null,"maxFreeSockets":256,"scheduling":"lifo","maxTotalSockets":null,"totalSocketCount":0,"maxCachedSessions":100,"_sessionCache":{"map":{},"list":[]}},"allowAbsoluteUrls":true}',
-              data: '{"data":100}',
-              headers: '{}',
-              request:
-                '"[{\\"responseURL\\":\\"1\\"},\\"https://api.example.com/data\\"]"',
-              status: 200,
-              statusText: undefined,
-            },
+            result: 100,
           },
         ];
 
@@ -249,6 +236,35 @@ describe('rest-client', () => {
           if (error instanceof Error) {
             expect(error.message).toEqual(
               "Only numerical output is supported. 'Jack' is not a number."
+            );
+          }
+        }
+      });
+
+      it('rejects with response data no content error.', async () => {
+        expect.assertions(1);
+        const config = {
+          method: 'GET',
+          url: 'https://api.example.com/data',
+          output: 'result',
+          jpath: 'data',
+        };
+        mock.onGet(config.url).reply(204, {});
+
+        const restClient = RESTClient(config, parametersMetadata, {});
+        const input = [
+          {
+            timestamp: '2024-03-01',
+            duration: 3600,
+          },
+        ];
+
+        try {
+          await restClient.execute(input);
+        } catch (error) {
+          if (error instanceof Error) {
+            expect(error.message).toEqual(
+              'status code 204: The response data has no content.'
             );
           }
         }
