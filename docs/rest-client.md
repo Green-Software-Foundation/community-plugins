@@ -17,7 +17,7 @@ The parameters are required in config: `method`, `url`, `data`, `bearer-token`, 
 - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
 - `url`: The URL to which you send the request 
 - `data` : data to be sent to the server, used with `PUT` and `POST` methods
-- `bearer-tokken`: optional and Bearer Token providing authentication information to the target.
+- `bearer-token`: optional and Bearer Token providing authentication information to the target.
 - `http-basic-authentication` : optional and authentication information for HTTP Basic Authentication
     ```yml
     http-basic-authentication: 
