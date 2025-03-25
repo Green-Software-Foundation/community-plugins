@@ -21,7 +21,7 @@ export const RESTClient = PluginFactory({
       url: z.string(),
       data: z.any().optional(),
       'http-basic-authentication': z.record(z.string(), z.string()).optional(),
-      'bearer-tokken': z.string().optional(),
+      'bearer-token': z.string().optional(),
       jpath: z.string().optional(),
       output: z.string(),
     });
