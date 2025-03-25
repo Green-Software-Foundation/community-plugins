@@ -52,7 +52,7 @@ initialize:
       config:
         url: https://api.example.com/data
         method: get
-        bearer-tokken: Bearer your-secret-token
+        bearer-token: Bearer your-secret-token
         jpath: $.information[?(@.id==1)].wattage
         output: wattage
 tree:
