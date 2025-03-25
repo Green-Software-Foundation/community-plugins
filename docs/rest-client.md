@@ -143,7 +143,7 @@ The required parameters are:
 - `method`: this must be a string
 - `url`: this must be a string
 - `data` : this is must be array
-- `bearer-tokken`: this must be a string
+- `bearer-token`: this must be a string
 - `http-basic-authentication` : this must be a string
 - `jpath`: this must be a string
 - `output`: this must be a string
