@@ -70,7 +70,7 @@ const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
     url,
     data,
     'http-basic-authentication': auth,
-    'bearer-tokken': authorization,
+    'bearer-token': authorization,
     output,
   } = config;
   const agent = new Agent({
