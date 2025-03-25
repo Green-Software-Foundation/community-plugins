@@ -2,13 +2,13 @@
 
 `rest-client` is a plugin for executing HTTP methods `GET`, `PUT`, and `POST`. 
 
-You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method.Only a numeric value is accepted as `output`, otherwise an error is returned.
+You provide some query parameters including `url`, `method`, and so on. `url` is URL for an online resource. `method` specifies the HTTP method. Only a numeric value is accepted as `output`, otherwise an error is returned.
 
 ## Parameters
 
 ### Plugin config
 
-The parameters are required in config: `method`, `url`, `data`, `headers`, `http-basic-authentication`, `jpath` and `output`.
+The parameters are required in config: `method`, `url`, `data`, `headers`, `http-basic-authentication`, `ssl-tls-active`, `jpath` and `output`.
 
 
 - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
@@ -152,7 +152,7 @@ The required parameters are:
 - `method`: this must be a string
 - `url`: this must be a string
 - `data` : this is must be array
-- `bearer-tokken`: this must be a string
+- `bearer-token`: this must be a string
 - `http-basic-authentication` : this must be a string
 - `jpath`: this must be a string
 - `output`: this must be a string
