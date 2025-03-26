@@ -39,7 +39,7 @@ describe('rest-client', () => {
       it('successfully applies RESTCLient `GET` method to given input.', async () => {
         expect.assertions(1);
         const config = {
-          method: 'GeT',
+          method: 'GET',
           url: 'https://api.example.com/data',
           jpath: '$.data',
           output: 'result',
