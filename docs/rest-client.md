@@ -29,7 +29,7 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
       password: 'yourPassword'
     
     ```
-- `ssl-tls-active`: optional, SSL/TLS is enabled if true and undefined, SSL/TLS is disabled if false
+- `ssl-tls-active`: optional, SSL/TLS certificate is validated if true and undefined and SSL/TLS certificate validation is skiped  if false
 - `jpath`: JSONPath expression and you can use it when using the GET method
 - `output`: parameter name to store the result of this plugin
 
