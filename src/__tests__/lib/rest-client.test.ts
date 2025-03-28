@@ -24,7 +24,7 @@ describe('rest-client', () => {
           url: '',
           method: 'get',
           output: 'wattage',
-          'ssl-tls-active': false,
+          'tls-verify': false,
           jpath: 'data',
         };
 
@@ -73,7 +73,7 @@ describe('rest-client', () => {
           data: {data: 100},
           jpath: 'data',
           output: 'result',
-          'ssl-tls-active': true,
+          'tls-verify': true,
         };
 
         const restClient = RESTClient(config, parametersMetadata, {});

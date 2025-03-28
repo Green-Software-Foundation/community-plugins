@@ -21,7 +21,7 @@ export const RESTClient = PluginFactory({
       data: z.any().optional(),
       'http-basic-authentication': z.record(z.string(), z.string()).optional(),
       headers: z.record(z.string(), z.any()).optional(),
-      'ssl-tls-active': z.boolean().optional(),
+      'tls-verify': z.boolean().optional(),
       jpath: z.string(),
       output: z.string(),
     });
@@ -67,7 +67,7 @@ const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
     data,
     'http-basic-authentication': auth,
     headers,
-    'ssl-tls-active': rejectUnauthorized,
+    'tls-verify': rejectUnauthorized,
   } = config;
 
   let agent;

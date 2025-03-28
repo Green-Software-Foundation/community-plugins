@@ -8,7 +8,7 @@ You provide some query parameters including `url`, `method`, and so on. `url` is
 
 ### Plugin config
 
-The parameters are required in config: `method`, `url`, `data`, `headers`, `http-basic-authentication`, `ssl-tls-active`, `jpath` and `output`.
+The parameters are required in config: `method`, `url`, `data`, `headers`, `http-basic-authentication`, `tls-verify`, `jpath` and `output`.
 
 
 - `method`: HTTP method, you can choose `GET`, `PUT`, and `POST`
@@ -29,7 +29,7 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
       password: 'yourPassword'
     
     ```
-- `ssl-tls-active`: optional, SSL/TLS certificate is validated if true and undefined and SSL/TLS certificate validation is skiped  if false
+- `tls-verify`: optional, the server certificate is verified against the list of supplied CAs if true and undefined
 - `jpath`: JSONPath expression and you can use it when using the GET method
 - `output`: parameter name to store the result of this plugin
 
@@ -59,7 +59,7 @@ initialize:
         method: get
         headers:
           Authorization: Bearer your-secret-token
-        ssl-tls-active: true
+        tls-verify: true
         jpath: $.information[?(@.id==1)].wattage
         output: wattage
 tree:
@@ -154,7 +154,7 @@ The required parameters are:
 - `data` : this is must be a array
 - `header`: this must be a array
 - `http-basic-authentication` : this must be a string
-- `ssl-tls-active`: this must be a booleam
+- `tls-verify`: this must be a booleam
 - `jpath`: this must be a string
 - `output`: this must be a string
 
