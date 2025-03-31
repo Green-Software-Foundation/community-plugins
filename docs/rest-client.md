@@ -20,14 +20,14 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
       - Accept: application/json
       - Authorization: Bearer xxxxxx
       - X-Custom-Header: foo
-    
+      - Content-Type: application/json
     ```
+    - `Content-Type`: `application/json` would be set to `Content-Type` if `Content-Type` is undefined
 - `http-basic-authentication` : optional and authentication information for HTTP Basic Authentication
     ```yml
     http-basic-authentication: 
       username: 'yourUsername'
       password: 'yourPassword'
-    
     ```
 - `tls-verify`: optional, the server certificate is verified against the list of supplied CAs if true or undefined. `true` is set by default.
 - `jpath`: JSONPath expression and you can use it when using the GET method

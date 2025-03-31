@@ -81,12 +81,14 @@ const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
     });
   }
 
+  const header = ensureContentType(method, headers);
+
   const response = await axios({
     method: method.toUpperCase(),
     url: url,
     data: data,
     auth: auth,
-    headers: headers,
+    headers: header,
     httpsAgent: agent,
   });
 
@@ -126,4 +128,23 @@ const processData = (
     ...input,
     [output]: result,
   }));
+};
+
+const ensureContentType = (
+  method: string,
+  headers?: {[key: string]: string}
+): any => {
+  if (['POST', 'PUT'].includes(method.toUpperCase())) {
+    if (headers === undefined) {
+      const header = {'Content-Type': 'application/json'};
+      return header;
+    } else if (!Object.prototype.hasOwnProperty.call(headers, 'Content-Type')) {
+      headers['Content-Type'] = 'application/json';
+      return headers;
+    } else {
+      return headers;
+    }
+  } else {
+    return headers;
+  }
 };
