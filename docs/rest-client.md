@@ -29,7 +29,7 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
       password: 'yourPassword'
     
     ```
-- `tls-verify`: optional, the server certificate is verified against the list of supplied CAs if true and undefined
+- `tls-verify`: optional, the server certificate is verified against the list of supplied CAs if true or undefined. `true` is set by default.
 - `jpath`: JSONPath expression and you can use it when using the GET method
 - `output`: parameter name to store the result of this plugin
 
