@@ -152,7 +152,7 @@ The required parameters are:
 - `method`: this must be a string
 - `url`: this must be a string
 - `data` : this is must be a array
-- `header`: this must be a array
+- `headers`: this must be a array
 - `http-basic-authentication` : this must be a string
 - `tls-verify`: this must be a booleam
 - `jpath`: this must be a string
