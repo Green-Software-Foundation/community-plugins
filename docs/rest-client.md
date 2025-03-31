@@ -141,7 +141,7 @@ The results will be saved to a new `yaml` file in `./examples/outputs`
 
 ## Errors
 
-`rest-client` exposes two of the IF error classes.
+`RESTClient` exposes two of the IF error classes.
 
 ### ConfigError
 
