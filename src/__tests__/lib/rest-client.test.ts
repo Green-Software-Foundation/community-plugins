@@ -6,6 +6,7 @@ import {ERRORS} from '@grnsft/if-core/utils';
 const {FetchingFileError, ConfigError} = ERRORS;
 
 describe('rest-client', () => {
+  const ORIGINAL_ENV = process.env;
   const mock = new AxiosMockAdapter(axios);
 
   describe('RESTClient: ', () => {
@@ -16,6 +17,7 @@ describe('rest-client', () => {
 
     afterEach(() => {
       mock.reset();
+      process.env = {...ORIGINAL_ENV};
     });
 
     describe('init: ', () => {
@@ -36,6 +38,64 @@ describe('rest-client', () => {
     });
 
     describe('execute(): ', () => {
+      it('successfully replaces with environment variables', async () => {
+        expect.assertions(3);
+        const config = {
+          method: 'POST',
+          url: 'http://${TENANT}.example.com/data',
+          data: {'secret-data': '${SECRETS}'},
+          'http-basic-authentication': {
+            username: '${TESTUSER}',
+            password: '${TESTPASSWORD}',
+          },
+          headers: {
+            'X-Token': '${TOKEN}',
+          },
+          jpath: '$.data',
+          output: 'result',
+        };
+
+        process.env['TENANT'] = 'test-tenant';
+        process.env['SECRETS'] = 'secret...';
+        process.env['TESTUSER'] = 'testuser';
+        process.env['TESTPASSWORD'] = 'testpassword';
+        process.env['TOKEN'] = 'secret-token';
+        const restClient = RESTClient(config, parametersMetadata, {});
+        mock
+          .onPost('http://test-tenant.example.com/data', {
+            'secret-data': 'secret...',
+          })
+          .reply(config => {
+            const headers = config.headers ?? {};
+            expect(headers['X-Token']).toBe('secret-token');
+
+            if (config.auth) {
+              const basicStr = Buffer.from(
+                `${config.auth.username}:${config.auth.password}`
+              ).toString('base64');
+              expect(basicStr).toBe('dGVzdHVzZXI6dGVzdHBhc3N3b3Jk');
+            }
+
+            return [200, {data: 100}];
+          });
+
+        const result = await restClient.execute([
+          {
+            timestamp: '2021-01-01T00:00:00Z',
+            duration: 3600,
+          },
+        ]);
+        const expectedResult = [
+          {
+            timestamp: '2021-01-01T00:00:00Z',
+            duration: 3600,
+            result: 100,
+          },
+        ];
+
+        expect(result).toStrictEqual(expectedResult);
+      });
+
       it('successfully applies RESTCLient `GET` method to given input. (tls-verify is undefined)', async () => {
         expect.assertions(3);
         const config = {

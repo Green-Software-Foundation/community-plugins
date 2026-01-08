@@ -34,6 +34,9 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
 - `observe-mode`: optional, the execution timestamp will be automatically inserted into the `inputs` when using this plugin with `observe` if `true`. `false` is set by default. This option should not be set to `true` when used with `compute`. An error will occur if this option is set to `true` while a `timestamp` already exists in the `inputs`.
 - `output`: parameter name to store the result of this plugin
 
+> [!TIP]
+> You can put environment variable name into `url`, `data`, `http-basic-authentication`, `headers`. Describe with `${}` like bash.
+
 ### Inputs
 
 There are no strict requirements on input for this plugin because they depend upon the contents of the target and your input data at the time the rest client is invoked. Please make sure you are requesting data from target that exist in the target database.
@@ -139,6 +142,41 @@ if-run --manifest ./examples/manifests/rest-client.yml --output ./examples/outpu
 ```
 
 The results will be saved to a new `yaml` file in `./examples/outputs`
+
+### Manifest with environment variables
+
+Following example explains how to use environment variables in the manifest. You can specify variable name with `${}` like bash. In this case, the manifest refers `TENANT`, `USERNAME`, `PASSWORD`, `SECRET_KEY`, `SECRET_VALUE`. They should be defined before running IF of course.
+
+```yaml
+name: get-wattage
+tags:
+initialize:
+  plugins:
+    get-wattage:
+      path: 'https://github.com/Green-Software-Foundation/community-plugins'
+      method: RESTClient
+      config:
+        url: https://${TENANT}.api.example.com/data
+        http-basic-authentication:
+          username: ${USERNAME}
+          password: ${PASSWORD}
+        method: POST
+        headers:
+          X-Key: ${SECRET_KEY}
+        data:
+          secrets: ${SECRET_VALUE}
+        jpath: $.information[?(@.id==1)].wattage
+        output: wattage
+tree:
+  children:
+    child:
+      pipeline:
+        compute:
+          - get-wattage
+      inputs:
+        - timestamp: 2023-07-06T00:00
+          duration: 100
+```
 
 ## Errors
 
