@@ -30,11 +30,12 @@ export const RESTClient = PluginFactory({
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const {method, url} = config;
+    const actualConfig = replaceEnvVars(config);
+    const {method, url} = actualConfig;
 
     try {
       if (['POST', 'PUT', 'GET'].includes(method.toUpperCase())) {
-        return await handleRequest(inputs, config);
+        return await handleRequest(inputs, actualConfig);
       } else {
         throw new Error(`Unsupported method: ${method.toUpperCase()}`);
       }
@@ -61,6 +62,32 @@ export const RESTClient = PluginFactory({
     }
   },
 });
+
+const replaceEnvVars = (config: ConfigParams): ConfigParams => {
+  const ENV_VAR_PATTERN = /\$\{([^}]+)\}/g;
+  const replaceEnvVar = (value: any): any => {
+    if (typeof value === 'string') {
+      return value.replace(
+        ENV_VAR_PATTERN,
+        (_, envName: string) => process.env[envName] ?? ''
+      );
+    } else if (Array.isArray(value)) {
+      return value.map(v => replaceEnvVar(v));
+    } else if (value && typeof value === 'object') {
+      return Object.fromEntries(
+        Object.entries(value).map(([k, v]) => [k, replaceEnvVar(v)])
+      );
+    } else {
+      return value;
+    }
+  };
+
+  const url = replaceEnvVar(config.url);
+  const data = replaceEnvVar(config.data);
+  const auth = replaceEnvVar(config['http-basic-authentication']);
+  const headers = replaceEnvVar(config.headers);
+  return {...config, url, data, 'http-basic-authentication': auth, headers};
+};
 
 const handleRequest = async (inputs: PluginParams, config: ConfigParams) => {
   const {
