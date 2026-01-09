@@ -35,7 +35,7 @@ The parameters are required in config: `method`, `url`, `data`, `headers`, `http
 - `output`: parameter name to store the result of this plugin
 
 > [!TIP]
-> You can put environment variable name into `url`, `data`, `http-basic-authentication`, `headers`. Describe with `${}` like bash.
+> You can put environment variable or input parameter name into `url`, `data`, `http-basic-authentication`, `headers`. Describe with `${}` like bash.
 
 ### Inputs
 
@@ -143,9 +143,11 @@ if-run --manifest ./examples/manifests/rest-client.yml --output ./examples/outpu
 
 The results will be saved to a new `yaml` file in `./examples/outputs`
 
-### Manifest with environment variables
+### Manifest with variables
 
-Following example explains how to use environment variables in the manifest. You can specify variable name with `${}` like bash. In this case, the manifest refers `TENANT`, `USERNAME`, `PASSWORD`, `SECRET_KEY`, `SECRET_VALUE`. They should be defined before running IF of course.
+You can refer environment variables and input parameter in your manifest with `${}` like bash. You need to add prefix as parameter type. `${env:xxx}` is for environment variables, `${inputs:xxx}` is for input parameters.
+
+Following example explains how to use environment variables and input parameters in the manifest. In this case, the manifest refers `tenant` and `data` from input values, `USERNAME`, `PASSWORD`, `SECRET_KEY` from environment variables. Environment variables should be defined before running IF of course.
 
 ```yaml
 name: get-wattage
@@ -156,15 +158,15 @@ initialize:
       path: 'https://github.com/Green-Software-Foundation/community-plugins'
       method: RESTClient
       config:
-        url: https://${TENANT}.api.example.com/data
+        url: https://${inputs:tenant}.api.example.com/data
         http-basic-authentication:
-          username: ${USERNAME}
-          password: ${PASSWORD}
+          username: ${env:USERNAME}
+          password: ${env:PASSWORD}
         method: POST
         headers:
-          X-Key: ${SECRET_KEY}
+          X-Key: ${env:SECRET_KEY}
         data:
-          secrets: ${SECRET_VALUE}
+          param: ${inputs:data}
         jpath: $.information[?(@.id==1)].wattage
         output: wattage
 tree:
@@ -176,6 +178,8 @@ tree:
       inputs:
         - timestamp: 2023-07-06T00:00
           duration: 100
+          tenant: foo
+          data: bar
 ```
 
 ## Errors
