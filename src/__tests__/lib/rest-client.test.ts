@@ -42,14 +42,14 @@ describe('rest-client', () => {
         expect.assertions(3);
         const config = {
           method: 'POST',
-          url: 'http://${TENANT}.example.com/data',
-          data: {'secret-data': '${SECRETS}'},
+          url: 'http://${env:TENANT}.example.com/data',
+          data: {'secret-data': '${env:SECRETS}'},
           'http-basic-authentication': {
-            username: '${TESTUSER}',
-            password: '${TESTPASSWORD}',
+            username: '${env:TESTUSER}',
+            password: '${env:TESTPASSWORD}',
           },
           headers: {
-            'X-Token': '${TOKEN}',
+            'X-Token': '${env:TOKEN}',
           },
           jpath: '$.data',
           output: 'result',

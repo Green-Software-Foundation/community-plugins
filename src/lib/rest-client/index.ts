@@ -30,7 +30,7 @@ export const RESTClient = PluginFactory({
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const actualConfig = replaceEnvVars(config);
+    const actualConfig = replaceVars(config);
     const {method, url} = actualConfig;
 
     try {
@@ -63,29 +63,32 @@ export const RESTClient = PluginFactory({
   },
 });
 
-const replaceEnvVars = (config: ConfigParams): ConfigParams => {
-  const ENV_VAR_PATTERN = /\$\{([^}]+)\}/g;
-  const replaceEnvVar = (value: any): any => {
+const replaceVars = (config: ConfigParams): ConfigParams => {
+  const VAR_PATTERN = /\$\{([^:]+):([^}]+)\}/g;
+  const replaceVar = (value: any): any => {
     if (typeof value === 'string') {
-      return value.replace(
-        ENV_VAR_PATTERN,
-        (_, envName: string) => process.env[envName] ?? ''
-      );
+      return value.replace(VAR_PATTERN, (_, type: string, name: string) => {
+        if (type === 'env') {
+          return process.env[name] ?? '';
+        } else {
+          return value;
+        }
+      });
     } else if (Array.isArray(value)) {
-      return value.map(v => replaceEnvVar(v));
+      return value.map(v => replaceVar(v));
     } else if (value && typeof value === 'object') {
       return Object.fromEntries(
-        Object.entries(value).map(([k, v]) => [k, replaceEnvVar(v)])
+        Object.entries(value).map(([k, v]) => [k, replaceVar(v)])
       );
     } else {
       return value;
     }
   };
 
-  const url = replaceEnvVar(config.url);
-  const data = replaceEnvVar(config.data);
-  const auth = replaceEnvVar(config['http-basic-authentication']);
-  const headers = replaceEnvVar(config.headers);
+  const url = replaceVar(config.url);
+  const data = replaceVar(config.data);
+  const auth = replaceVar(config['http-basic-authentication']);
+  const headers = replaceVar(config.headers);
   return {...config, url, data, 'http-basic-authentication': auth, headers};
 };
 
