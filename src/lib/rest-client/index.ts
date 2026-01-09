@@ -30,7 +30,7 @@ export const RESTClient = PluginFactory({
     return validate<z.infer<typeof configSchema>>(configSchema, config);
   },
   implementation: async (inputs: PluginParams[], config: ConfigParams) => {
-    const actualConfig = replaceVars(config);
+    const actualConfig = replaceVars(inputs, config);
     const {method, url} = actualConfig;
 
     try {
@@ -63,13 +63,18 @@ export const RESTClient = PluginFactory({
   },
 });
 
-const replaceVars = (config: ConfigParams): ConfigParams => {
+const replaceVars = (
+  inputs: PluginParams[],
+  config: ConfigParams
+): ConfigParams => {
   const VAR_PATTERN = /\$\{([^:]+):([^}]+)\}/g;
   const replaceVar = (value: any): any => {
     if (typeof value === 'string') {
       return value.replace(VAR_PATTERN, (_, type: string, name: string) => {
         if (type === 'env') {
           return process.env[name] ?? '';
+        } else if (type === 'inputs') {
+          return inputs.find(item => name in item)?.[name] ?? '';
         } else {
           return value;
         }

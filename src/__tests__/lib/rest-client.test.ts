@@ -96,6 +96,69 @@ describe('rest-client', () => {
         expect(result).toStrictEqual(expectedResult);
       });
 
+      it('successfully replaces with parameters', async () => {
+        expect.assertions(3);
+        const config = {
+          method: 'POST',
+          url: 'http://${inputs:tenant}.example.com/data',
+          data: {'secret-data': '${inputs:secrets}'},
+          'http-basic-authentication': {
+            username: '${inputs:testuser}',
+            password: '${inputs:testpassword}',
+          },
+          headers: {
+            'X-Token': '${inputs:token}',
+          },
+          jpath: '$.data',
+          output: 'result',
+        };
+
+        const restClient = RESTClient(config, parametersMetadata, {});
+        mock
+          .onPost('http://test-tenant.example.com/data', {
+            'secret-data': 'secret...',
+          })
+          .reply(config => {
+            const headers = config.headers ?? {};
+            expect(headers['X-Token']).toBe('secret-token');
+
+            if (config.auth) {
+              const basicStr = Buffer.from(
+                `${config.auth.username}:${config.auth.password}`
+              ).toString('base64');
+              expect(basicStr).toBe('dGVzdHVzZXI6dGVzdHBhc3N3b3Jk');
+            }
+
+            return [200, {data: 100}];
+          });
+
+        const result = await restClient.execute([
+          {
+            timestamp: '2021-01-01T00:00:00Z',
+            duration: 3600,
+            tenant: 'test-tenant',
+            secrets: 'secret...',
+            testuser: 'testuser',
+            testpassword: 'testpassword',
+            token: 'secret-token',
+          },
+        ]);
+        const expectedResult = [
+          {
+            timestamp: '2021-01-01T00:00:00Z',
+            duration: 3600,
+            tenant: 'test-tenant',
+            secrets: 'secret...',
+            testuser: 'testuser',
+            testpassword: 'testpassword',
+            token: 'secret-token',
+            result: 100,
+          },
+        ];
+
+        expect(result).toStrictEqual(expectedResult);
+      });
+
       it('successfully applies RESTCLient `GET` method to given input. (tls-verify is undefined)', async () => {
         expect.assertions(3);
         const config = {
