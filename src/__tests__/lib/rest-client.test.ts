@@ -100,7 +100,7 @@ describe('rest-client', () => {
         expect.assertions(3);
         const config = {
           method: 'POST',
-          url: 'http://${inputs:tenant}.example.com/data',
+          url: 'http://${inputs:tenant}.example.com/${env:ENDPOINT}',
           data: {'secret-data': '${inputs:secrets}'},
           'http-basic-authentication': {
             username: '${inputs:testuser}',
@@ -113,6 +113,7 @@ describe('rest-client', () => {
           output: 'result',
         };
 
+        process.env['ENDPOINT'] = 'data';
         const restClient = RESTClient(config, parametersMetadata, {});
         mock
           .onPost('http://test-tenant.example.com/data', {

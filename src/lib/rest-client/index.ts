@@ -67,18 +67,30 @@ const replaceVars = (
   inputs: PluginParams[],
   config: ConfigParams
 ): ConfigParams => {
+  const VAR_EXACTLY_PATTERN = /^\$\{([^:]+):([^}]+)\}$/;
   const VAR_PATTERN = /\$\{([^:]+):([^}]+)\}/g;
   const replaceVar = (value: any): any => {
     if (typeof value === 'string') {
-      return value.replace(VAR_PATTERN, (_, type: string, name: string) => {
-        if (type === 'env') {
-          return process.env[name] ?? '';
-        } else if (type === 'inputs') {
-          return inputs.find(item => name in item)?.[name] ?? '';
+      const m = value.match(VAR_EXACTLY_PATTERN);
+      if (m && m[0] === value) {
+        if (m[1] === 'env') {
+          return process.env[m[2]];
+        } else if (m[1] === 'inputs') {
+          return inputs.find(item => m[2] in item)?.[m[2]];
         } else {
           return value;
         }
-      });
+      } else {
+        return value.replace(VAR_PATTERN, (_, type: string, name: string) => {
+          if (type === 'env') {
+            return process.env[name] ?? '';
+          } else if (type === 'inputs') {
+            return inputs.find(item => name in item)?.[name] ?? '';
+          } else {
+            return value;
+          }
+        });
+      }
     } else if (Array.isArray(value)) {
       return value.map(v => replaceVar(v));
     } else if (value && typeof value === 'object') {
