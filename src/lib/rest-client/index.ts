@@ -1,5 +1,5 @@
 import {z} from 'zod';
-import axios from 'axios';
+import axios, {AxiosError} from 'axios';
 import * as jsonpath from 'jsonpath';
 import {Agent} from 'https';
 
@@ -40,7 +40,19 @@ export const RESTClient = PluginFactory({
         throw new Error(`Unsupported method: ${method.toUpperCase()}`);
       }
     } catch (error) {
-      if (error instanceof Error) {
+      if (axios.isAxiosError(error)) {
+        const ae = error as AxiosError;
+        if (ae.response) {
+          const resp = ae.response;
+          throw new FetchingFileError(
+            `url: ${url}, status code: ${resp.status}, response body: ${JSON.stringify(resp.data)}`
+          );
+        } else {
+          throw new FetchingFileError(
+            `url: ${url}, description: ${error.message}`
+          );
+        }
+      } else if (error instanceof Error) {
         const errorMessage = error.message;
         if (
           errorMessage.startsWith('Unsupported method') ||
